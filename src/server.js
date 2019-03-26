@@ -24,7 +24,11 @@ function push (stream, path) {
     return
   }
 
-  stream.pushStream({ [HTTP2_HEADER_PATH]: path }, (pushStream) => {
+  stream.pushStream({ [HTTP2_HEADER_PATH]: path }, (err, pushStream) => {
+    if (err) {
+      console.error(err)
+      return
+    }
     pushStream.respondWithFD(file.fileDescriptor, file.headers)
   })
 }
@@ -43,7 +47,6 @@ function onRequest (req, res) {
 
   // Push with index.html
   if (reqPath === '/index.html') {
-    push(res.stream, '/bundle1.js')
     push(res.stream, '/bundle2.js')
   }
 
