@@ -1,4 +1,4 @@
 'use strict'
 
-console.log('Bundle 3')
-document.body.innerHTML += '<p>Bundle 3 loaded</p>'
+console.log(',bundle3-0,', performance.now());
+// document.body.innerHTML += '<p>Bundle 3 loaded</p>'
