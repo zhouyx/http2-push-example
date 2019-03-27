@@ -10,4 +10,4 @@ function addBundle(path) {
   document.head.appendChild(script);
 }
 
-addBundle('/bundle2.js');
+addBundle('https://localhost:3000/bundle2.js');
