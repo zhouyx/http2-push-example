@@ -18,10 +18,15 @@ const server = http2.createSecureServer({
 
 
 const METADATA = {
-  '/bundle1.js': [
-    {path: '/bundle2.js'},
-    {path: '/bundle3.js'},
-  ],
+  '/bundle1.js': {
+    preload: [
+      {path: '/bundle2.js'},
+      {path: '/bundle3.js'},
+    ],
+    prefetch: [
+      {path: '/bundle4.js'},
+    ],
+  },
 };
 
 
@@ -45,12 +50,12 @@ function push(stream, path, forPath) {
 
 
 // Link file.
-function link(res, path, forPath, headers) {
-  console.log('link: ', path, 'for: ', forPath);
+function link(res, path, rel, forPath, headers) {
+  console.log('link:' + 'rel: ', path, 'for: ', forPath);
   if (!headers['Link']) {
     headers['Link'] = [];
   }
-  headers['Link'].push(`<${path}>; rel=preload; as=script`);
+  headers['Link'].push(`<${path}>; rel=${rel}; as=script`);
 }
 
 
@@ -58,7 +63,8 @@ function link(res, path, forPath, headers) {
 function onRequest(req, res) {
   const [reqPath, query] = req.url.split('?');
   const filePath = reqPath == '/' ? '/index.html' : reqPath;
-  console.log('onRequest: ', req.url, reqPath, query);
+  console.log('onRequest: ', req.url, reqPath, query || '',
+      req.headers['cache-control']);
   const file = publicFiles.get(filePath);
 
   // File not found
@@ -71,17 +77,25 @@ function onRequest(req, res) {
 
   // Push or link if needed.
   const headers = {};
+  if (reqPath.endsWith('.js')) {
+    headers['Cache-Control'] = 'public, max-age=600';
+  }
   const metadata = METADATA[reqPath];
-  if (metadata) {
+  if (metadata && metadata.preload) {
     if (query == 'push') {
-      metadata.forEach(r => {
+      metadata.preload.forEach(r => {
         push(res.stream, r.path, reqPath, headers);
       });
     } else if (query == 'link') {
-      metadata.forEach(r => {
-        link(res, r.path, reqPath, headers);
+      metadata.preload.forEach(r => {
+        link(res, r.path, 'preload', reqPath, headers);
       });
     }
+  }
+  if (metadata && metadata.prefetch) {
+    metadata.prefetch.forEach(r => {
+      link(res, r.path, 'prefetch', reqPath, headers);
+    });
   }
 
   // Serve file
