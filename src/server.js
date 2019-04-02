@@ -3,9 +3,11 @@
 const express = require('express');
 const app = express();
 const fs = require('fs')
+const path = require('path');
 // eslint-disable-next-line
 
 const PORT = process.env.PORT || 8000
+const PUBLIC_PATH = path.join(__dirname, '../public')
 
 app.listen(PORT, () => console.log(`Testing app listening on port ${PORT}!`))
 
@@ -25,7 +27,7 @@ app.get('*.js/', (req, res) => {
   onRequest(req, res);
 });
 
-app.use(express.static('../public'))
+app.use(express.static(PUBLIC_PATH))
 
 
 // Link file.
@@ -34,20 +36,19 @@ function link(res, path, rel, forPath, headers) {
   if (!headers['Link']) {
     headers['Link'] = [];
   }
-  headers['Link'].push(`<${path}>; rel=${rel}; as=script nopush`);
+  headers['Link'].push(`<${path}>; rel=${rel}; as=script; nopush`);
 }
 
 
 // Request handler.
 function onRequest(req, res) {
-  const dirPath = '../public'
   const [reqPath, query] = req.url.split('?');
   const filePath = reqPath == '/' ? '/index.html' : reqPath;
   console.log('onRequest: ', req.url, reqPath, query || '',
       req.headers['cache-control']);
 
-  const file = fs.readFileSync(dirPath + filePath);
-  const stat = fs.statSync(dirPath + filePath)
+  const file = fs.readFileSync(PUBLIC_PATH + filePath);
+  const stat = fs.statSync(PUBLIC_PATH + filePath)
 
   // File not found
   if (!file || !stat) {
