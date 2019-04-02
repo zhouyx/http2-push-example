@@ -13,11 +13,13 @@ function mark(name) {
 mark('0');
 
 function addBundle(name) {
+  /* __EXCLUDE__ */
   var path = new URL(name + '.js', BASE).href;
   var script = document.createElement('script');
   script.async = true;
   script.src = path;
   document.head.appendChild(script);
+  /* __END_EXCLUDE__ */
   mark('ask-' + name);
 }
 
@@ -79,4 +81,8 @@ next(function() {
   mark('ZZ');
 });
 mark('Z');
+
+next(function() {
+  /* __INCLUDE__ bundle2.js */
+});
 })();

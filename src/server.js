@@ -24,7 +24,11 @@ const METADATA = {
 };
 
 app.get('*.js/', (req, res) => {
-  onRequest(req, res);
+  onJsRequest(req, res);
+});
+
+app.get('/test.html', (req, res) => {
+  onTestHtmlRequest(req, res);
 });
 
 app.use(express.static(PUBLIC_PATH))
@@ -40,14 +44,14 @@ function link(res, path, rel, forPath, headers) {
 }
 
 
-// Request handler.
-function onRequest(req, res) {
+// Request handler for JavaScript.
+function onJsRequest(req, res) {
   const [reqPath, query] = req.url.split('?');
   const filePath = reqPath == '/' ? '/index.html' : reqPath;
-  console.log('onRequest: ', req.url, reqPath, query || '',
+  console.log('onJsRequest: ', req.url, reqPath, query || '',
       req.headers['cache-control']);
 
-  const file = fs.readFileSync(PUBLIC_PATH + filePath);
+  let file = fs.readFileSync(PUBLIC_PATH + filePath);
   const stat = fs.statSync(PUBLIC_PATH + filePath)
 
   // File not found
@@ -60,21 +64,56 @@ function onRequest(req, res) {
 
   // Push or link if needed.
   const headers = {
-    'content-length': stat.size,
     'last-modified': stat.mtime.toUTCString(),
     'Cache-Control': 'public, max-age=600',
     'Content-Type': 'application/javascript',
   };
-  // if (reqPath.endsWith('.js')) {
-  //   //res.setHeader('Cache-Control', 'public, max-age=600');
-  //   //headers['Cache-Control'] = 'public, max-age=600';
-  // }
   const metadata = METADATA[reqPath];
-  if (metadata && metadata.preload) {
-    if (query == 'link') {
-      metadata.preload.forEach(r => {
-        link(res, r.path, 'preload', reqPath, headers);
-      });
+  if (query == 'combine') {
+    console.log('COMBINE');
+    let fileString = file.toString('utf-8');
+
+    // Process includes.
+    while (true) {
+      // Format: /* __INCLUDE__ bundle2.js */
+      const start = fileString.indexOf('/* __INCLUDE__');
+      if (start == -1) {
+        break;
+      }
+      const end = fileString.indexOf('*/', start + 1);
+      const otherName =
+          fileString.substring(start + '/* __INCLUDE__'.length, end).trim();
+      const otherFile = fs.readFileSync(PUBLIC_PATH + '/' + otherName);
+      fileString =
+          fileString.substring(0, start) +
+          '/* bundle ' + otherName + '*/\n' +
+          otherFile.toString('utf-8') +
+          fileString.substring(end + 2);
+    }
+
+    // Process excludes
+    while (true) {
+      // Format: /* __EXCLUDE__ */ and /* __END_EXCLUDE__ */
+      const start = fileString.indexOf('/* __EXCLUDE__ */');
+      if (start == -1) {
+        break;
+      }
+      const end = fileString.indexOf('/* __END_EXCLUDE__ */', start + 1);
+      fileString =
+          fileString.substring(0, start) +
+          '/* exlcuded */\n' +
+          fileString.substring(end + '/* __END_EXCLUDE__ */'.length);
+    }
+
+    // Complete.
+    file = fileString;
+  } else {
+    if (metadata && metadata.preload) {
+      if (query == 'link') {
+        metadata.preload.forEach(r => {
+          link(res, r.path, 'preload', reqPath, headers);
+        });
+      }
     }
   }
   if (metadata && metadata.prefetch) {
@@ -82,6 +121,54 @@ function onRequest(req, res) {
       link(res, r.path, 'prefetch', reqPath, headers);
     });
   }
+
+  const keys = Object.keys(headers);
+  for (let i = 0; i < keys.length; i++) {
+    res.setHeader(keys[i], headers[keys[i]]);
+  }
+
+  res.end(file);
+}
+
+
+// Request handler for JavaScript.
+function onTestHtmlRequest(req, res) {
+  const [reqPath, query] = req.url.split('?');
+  const filePath = '/test.html';
+  console.log('onTestHtmlRequest: ', req.url, reqPath, query || '',
+      req.headers['cache-control']);
+
+  let file = fs.readFileSync(PUBLIC_PATH + filePath);
+  const stat = fs.statSync(PUBLIC_PATH + filePath)
+
+  // File not found
+  if (!file || !stat) {
+    console.log('404 ', reqPath);
+    res.statusCode = 404;
+    res.end();
+    return;
+  }
+
+  // Push or link if needed.
+  const headers = {
+    'last-modified': stat.mtime.toUTCString(),
+    'Cache-Control': 'public, max-age=600',
+    'Content-Type': 'text/html',
+  };
+
+  const mode = query || 'nopush';
+
+  // Transform.
+  let fileString = file.toString('utf-8');
+
+  // __NAME__
+  fileString = fileString.replace('__NAME__', mode.toUpperCase());
+
+  // __MODE__
+  fileString = fileString.replace('__MODE__', mode);
+
+  // Complete.
+  file = fileString;
 
   const keys = Object.keys(headers);
   for (let i = 0; i < keys.length; i++) {
