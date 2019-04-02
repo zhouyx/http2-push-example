@@ -11,7 +11,7 @@ function addBundle(path) {
 }
 
 console.log(',bundle1-ask-bundle2,', performance.now());
-addBundle('https://localhost:8000/bundle2.js');
+addBundle('./bundle2.js');
 
 
 let nextPromise = Promise.resolve();
