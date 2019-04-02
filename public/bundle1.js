@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 console.log(',bundle1-0,', performance.now());
 // document.body.innerHTML += '<p>Bundle 1 loaded</p>'
@@ -11,7 +11,7 @@ function addBundle(path) {
 }
 
 console.log(',bundle1-ask-bundle2,', performance.now());
-addBundle('https://localhost:3000/bundle2.js');
+addBundle('https://localhost:8000/bundle2.js');
 
 
 let nextPromise = Promise.resolve();
