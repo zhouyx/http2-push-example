@@ -4,11 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <script async src="/bundle1.js?link"/></script>
+
+  <script>
+    function mark(name) {
+      console.log('html-' + name, performance.now());
+      performance.mark('html-' + name);
+    }
+  </script>
 </head>
 <body>
 
-  <h1>Link</h1>
-  <script>console.log(',html-0,', performance.now())</script>
+<h1>Link</h1>
+<script>mark('0')</script>
 
 
 
@@ -53,7 +60,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-1,', performance.now())</script>
+  <script>mark('1')</script>
 
 
 
@@ -97,7 +104,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-2,', performance.now())</script>
+  <script>mark('2')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -140,7 +147,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-3,', performance.now())</script>
+  <script>mark('3')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -183,7 +190,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-4,', performance.now())</script>
+  <script>mark('4')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -226,7 +233,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-5,', performance.now())</script>
+  <script>mark('5')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -269,7 +276,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-6,', performance.now())</script>
+  <script>mark('6')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -312,7 +319,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-7,', performance.now())</script>
+  <script>mark('7')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -355,7 +362,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-8,', performance.now())</script>
+  <script>mark('8')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -398,7 +405,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-9,', performance.now())</script>
+  <script>mark('9')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -441,7 +448,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-10,', performance.now())</script>
+  <script>mark('10')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -484,7 +491,7 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-11,', performance.now())</script>
+  <script>mark('11')</script>
 
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fringilla dignissim viverra. Ut lobortis erat non turpis lacinia dictum. Praesent ut cursus dui, sit amet finibus tortor. Morbi accumsan enim non dictum faucibus. Vivamus viverra ultrices ullamcorper. Fusce ut luctus ex. Nam dapibus rhoncus ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam in bibendum turpis, nec sollicitudin lacus. Pellentesque quis euismod felis. Vivamus congue elit vitae velit iaculis mattis. Donec magna dui, viverra vitae nibh eget, vestibulum molestie est. Fusce at lorem viverra, scelerisque sapien sit amet, feugiat ex. In vitae mi consectetur, congue massa a, tincidunt tortor. Donec lobortis felis vel elementum mattis. Praesent justo orci, elementum ac efficitur ac, commodo ut ligula.
@@ -527,14 +534,14 @@
 
 <p>Maecenas eget massa massa. Nam porttitor ultricies nulla in sollicitudin. Vestibulum efficitur, nibh vel vulputate lobortis, eros mi viverra dui, eget suscipit ex lorem et justo. Curabitur tempor, elit dapibus suscipit aliquam, nisl sapien elementum mi, eget volutpat ligula eros at sapien. Ut elementum, mi sit amet condimentum fermentum, turpis elit feugiat quam, at ultrices leo justo a ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla orci neque, commodo et suscipit et, convallis et turpis. Proin maximus pellentesque arcu, id dapibus ligula gravida eget. Mauris dignissim tortor arcu, sit amet bibendum ex sodales non. Vivamus ullamcorper pretium tincidunt. Praesent congue hendrerit dignissim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam auctor elementum nibh non gravida. Nunc a libero tristique, condimentum mauris eget, feugiat risus.
 
-  <script>console.log(',html-12,', performance.now())</script>
+  <script>mark('12')</script>
 
 
 
 
 
 
-  <script>console.log(',html-Z,', performance.now())</script>
+  <script>mark('Z')</script>
 
 </body>
 </html>

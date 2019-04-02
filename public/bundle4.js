@@ -1,4 +1,19 @@
-'use strict'
+"use strict";
 
-console.log(',bundle4-0,', performance.now());
-// document.body.innerHTML += '<p>Bundle 4 loaded</p>'
+(function() {
+
+var NAME = 'bundle4';
+var BASE = document.currentScript && document.currentScript.src;
+
+function mark(name) {
+  console.log(NAME + '-' + name, performance.now());
+  performance.mark(NAME + '-' + name);
+}
+
+mark('0');
+
+
+
+
+mark('Z');
+})();
