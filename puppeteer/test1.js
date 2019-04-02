@@ -50,5 +50,6 @@ async function testRun(browser, name, options = {}) {
 
   await browser.close();
 
-  console.log('METRICS: ', JSON.stringify(metricsArray, null, 2));
+  console.log('METRICS:');
+  console.log(JSON.stringify(metricsArray, null, 2));
 })();
