@@ -1,5 +1,15 @@
 
 const puppeteer = require('puppeteer');
+const fs = require('fs')
+
+
+const OPTIONS = {
+  'help': {type: 'boolean'},
+  'runs': {type: 'int'},
+  'trace': {type: 'boolean'},
+  'screenshots': {type: 'boolean'},
+  'output': {type: 'string'},
+};
 
 
 async function testRun(browser, url, name, options = {}) {
@@ -8,7 +18,7 @@ async function testRun(browser, url, name, options = {}) {
   await page.setCacheEnabled(false);
 
   if (options.trace) {
-    await page.tracing.start({path: `exports/${name}-trace.json`});
+    await page.tracing.start({path: `${options.output}${name}-trace.json`});
   }
 
   await page.goto(url, {
@@ -16,8 +26,8 @@ async function testRun(browser, url, name, options = {}) {
   });
   page.evaluate(() => window.performance.mark('puppeteer-0'));
 
-  if (options.screenshot) {
-    await page.screenshot({path: `exports/${name}-screenshot-start.png`});
+  if (options.screenshots) {
+    await page.screenshot({path: `${options.output}${name}-screenshot-start.png`});
   }
 
   // Probe input latency.
@@ -34,12 +44,14 @@ async function testRun(browser, url, name, options = {}) {
     await page.tracing.stop();
   }
 
-  if (options.screenshot) {
-    await page.screenshot({path: `exports/${name}-screenshot-end.png`});
+  if (options.screenshots) {
+    await page.screenshot({path: `${options.output}${name}-screenshot-end.png`});
   }
 
   await page.close();
 
+  const json = JSON.stringify(metrics, null, 2);
+  fs.writeFileSync(`${options.output}${name}-metrics.json`, json);
   return metrics;
 }
 
@@ -55,18 +67,67 @@ async function sleep(interval) {
   const args = process.argv.slice(2);
   const url = args[0];
 
-  const browser = await puppeteer.launch();
-
   const options = {};
-  // const options = {trace: true};
+  for (let i = 0; i < args.length; i++) {
+    if (args[i].startsWith('--')) {
+      const optionArg = args[i].substring(2);
+      let [optionName, optionValue] = optionArg.split('=');
+      const option = OPTIONS[optionName];
+      if (!option) {
+        options.error = `unknown option "${optionName}"`;
+        break;
+      }
+      switch (option.type) {
+        case 'boolean':
+          optionValue = (optionValue == null || optionValue == 'true');
+          break;
+        case 'int':
+          optionValue = parseInt(optionValue, 10);
+          break;
+        case 'number':
+          optionValue = parseFloat(optionValue);
+          break;
+      }
+      options[optionName] = optionValue;
+    }
+  }
+
+  if (!url || options.help || options.error) {
+    if (options.error) {
+      console.error('ERROR: ' + options.error);
+    }
+    console.error('node test1.js <url> --option=value');
+    console.error('Options:');
+    for (const k in OPTIONS) {
+      const option = OPTIONS[k];
+      console.error(`--${k}(${option.type}): ${option.desc}`);
+    }
+    return;
+  }
+
+  if (!options.runs) {
+    options.runs = 1;
+  }
+  if (!options.output) {
+    options.output = 'exports/'
+  }
+
+  const browser = await puppeteer.launch();
 
   const metricsArray = [];
 
-  // await testRun(browser, url, 'PRERUN', options);
-  metricsArray.push(await testRun(browser, url, 'RUN1', options));
-  // metricsArray.push(await testRun(browser, url, 'RUN2', options));
+  if (options.runs <= 1) {
+    metricsArray.push(await testRun(browser, url, 'RUN', options));
+  } else {
+    await testRun(browser, url, 'PRERUN', options);
+    for (let i = 1; i <= options.runs; i++) {
+      metricsArray.push(await testRun(browser, url, 'RUN' + i, options));
+    }
+  }
 
   await browser.close();
 
-  console.log(JSON.stringify(metricsArray, null, 2));
+  const json = JSON.stringify(metricsArray, null, 2);
+  fs.writeFileSync(`${options.output}metrics.json`, json);
+  console.log(json);
 })();
