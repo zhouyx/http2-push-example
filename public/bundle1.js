@@ -4,6 +4,8 @@
 
 var NAME = 'bundle1';
 var BASE = document.currentScript && document.currentScript.src;
+var CORS_BASE = 'https://www.zhouyx.dev/'
+
 
 function mark(name) {
   console.log(NAME + '-' + name, performance.now());
@@ -14,7 +16,7 @@ mark('0');
 
 function addBundle(name) {
   /* __EXCLUDE__ */
-  var path = new URL(name + '.js', BASE).href;
+  var path = new URL(name + '.js', CORS_BASE).href;
   var script = document.createElement('script');
   script.async = true;
   script.src = path;
