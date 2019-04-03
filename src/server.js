@@ -135,7 +135,8 @@ function onJsRequest(req, res) {
 function onTestHtmlRequest(req, res) {
   const [reqPath, query] = req.url.split('?');
   const filePath = '/test.html';
-  console.log('onTestHtmlRequest: ', req.url, reqPath, query || '',
+  const host = req.headers['host'].toLowerCase();
+  console.log('onTestHtmlRequest: ', host, req.url, reqPath, query || '',
       req.headers['cache-control']);
 
   let file = fs.readFileSync(PUBLIC_PATH + filePath);
@@ -160,6 +161,15 @@ function onTestHtmlRequest(req, res) {
 
   // Transform.
   let fileString = file.toString('utf-8');
+
+  // __SCRIPT_BASE__
+  const scriptBase =
+      host.indexOf('localhost') != -1
+      ? ''
+      : host.indexOf('zhouyx.dev') != -1
+      ? '//preloadtest.com'
+      : '//zhouyx.dev';
+  fileString = fileString.replace('__SCRIPT_BASE__', scriptBase);
 
   // __NAME__
   fileString = fileString.replace('__NAME__', mode.toUpperCase());
