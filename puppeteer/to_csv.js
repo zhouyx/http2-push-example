@@ -3,99 +3,7 @@ const fs = require('fs')
 const path = require('path');
 
 
-function main(args, spec) {
-  console.log('to_csv: ', args);
-
-  const path = args[0];
-
-  const json = JSON.parse(fs.readFileSync(path).toString('utf-8'));
-  console.log(json);
-
-  var output = toCsv(json, spec);
-  fs.writeFileSync(path + '.csv', output);
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log(output);
-}
-
-
-function toCsv(json, spec) {
-  const _output = [];
-  function line(vals) {
-    _output.push(vals.map(v => {
-      if (v) {
-        const sv = String(v);
-        if (sv.indexOf('"') != -1) {
-          v = sv.replace(/\"/g, '');
-        }
-        if (sv.indexOf(',') != -1) {
-          v = `"${v}"`;
-        }
-      }
-      return v;
-    }).join(','));
-  }
-
-  // Header.
-  line(spec.map(c => c.col));
-
-  // Body.
-  for (let i = 0; i < json.length; i++) {
-    const data = json[i];
-    line(spec.map(c => {
-      let val;
-      const expr = c.val || c.col;
-      if (typeof expr == 'string') {
-        val = pathExpr(data, expr);
-      } else if (typeof expr == 'function') {
-        val = expr(data);
-      } else {
-        throw 'unknown expr type: ' + (typeof expr);
-      }
-      if (val != null) {
-        if (c.after) {
-          const sval = String(val);
-          const index = sval.lastIndexOf(c.after);
-          if (index != -1) {
-            val = sval.substring(index + c.after.length);
-          }
-        }
-      }
-      return val;
-    }));
-  }
-
-  return _output.join('\n');
-}
-
-
-function pathExpr(data, expr) {
-  const parts = expr.split('.');
-  let res = data;
-  for (let i = 0; i < parts.length; i++) {
-    res = res[parts[i]];
-    if (res == null) {
-      break;
-    }
-  }
-  return res;
-}
-
-
-function pathExprDelta(data, endExpr, startExpr) {
-  if (!startExpr) {
-    startExpr = endExpr + 'Start';
-    endExpr = endExpr + 'End';
-  }
-  return pathExpr(data, endExpr) - pathExpr(data, startExpr);
-}
-
-
-
-
-main(process.argv.slice(2), [
+const DEFAULT_SPEC = [
   {col: 'NAME'},
 
   // navigation.
@@ -230,4 +138,106 @@ main(process.argv.slice(2), [
     longTasks.forEach(item => res.push(item['name']));
     return res.join(';');
   }},
-]);
+];
+
+
+function main(args, spec) {
+  console.log('to_csv: ', args);
+
+  const path = args[0];
+
+  const json = JSON.parse(fs.readFileSync(path).toString('utf-8'));
+  console.log(json);
+
+  var output = toCsv(json, spec);
+  fs.writeFileSync(path + '.csv', output);
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log(output);
+}
+
+
+function toCsv(json, spec) {
+  const _output = [];
+  function line(vals) {
+    _output.push(vals.map(v => {
+      if (v) {
+        const sv = String(v);
+        if (sv.indexOf('"') != -1) {
+          v = sv.replace(/\"/g, '');
+        }
+        if (sv.indexOf(',') != -1) {
+          v = `"${v}"`;
+        }
+      }
+      return v;
+    }).join(','));
+  }
+
+  // Header.
+  line(spec.map(c => c.col));
+
+  // Body.
+  for (let i = 0; i < json.length; i++) {
+    const data = json[i];
+    line(spec.map(c => {
+      let val;
+      const expr = c.val || c.col;
+      if (typeof expr == 'string') {
+        val = pathExpr(data, expr);
+      } else if (typeof expr == 'function') {
+        val = expr(data);
+      } else {
+        throw 'unknown expr type: ' + (typeof expr);
+      }
+      if (val != null) {
+        if (c.after) {
+          const sval = String(val);
+          const index = sval.lastIndexOf(c.after);
+          if (index != -1) {
+            val = sval.substring(index + c.after.length);
+          }
+        }
+      }
+      return val;
+    }));
+  }
+
+  return _output.join('\n');
+}
+
+
+function pathExpr(data, expr) {
+  const parts = expr.split('.');
+  let res = data;
+  for (let i = 0; i < parts.length; i++) {
+    res = res[parts[i]];
+    if (res == null) {
+      break;
+    }
+  }
+  return res;
+}
+
+
+function pathExprDelta(data, endExpr, startExpr) {
+  if (!startExpr) {
+    startExpr = endExpr + 'Start';
+    endExpr = endExpr + 'End';
+  }
+  return pathExpr(data, endExpr) - pathExpr(data, startExpr);
+}
+
+
+function toDefaultCsv(path) {
+  const json = JSON.parse(fs.readFileSync(path).toString('utf-8'));
+  const output = toCsv(json, DEFAULT_SPEC);
+  fs.writeFileSync(path + '.csv', output);
+}
+
+
+module.exports = toDefaultCsv;
+
+// main(process.argv.slice(2), DEFAULT_SPEC);

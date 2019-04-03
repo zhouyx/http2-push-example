@@ -1,6 +1,7 @@
 
 const puppeteer = require('puppeteer');
 const fs = require('fs')
+const toCsv = require('./to_csv');
 
 
 const OPTIONS = {
@@ -129,5 +130,5 @@ async function sleep(interval) {
 
   const json = JSON.stringify(metricsArray, null, 2);
   fs.writeFileSync(`${options.output}metrics.json`, json);
-  console.log(json);
+  toCsv(`${options.output}metrics.json`);
 })();
