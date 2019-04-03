@@ -15,10 +15,10 @@ const METADATA = {
   '/bundle1.js': {
     preload: [
       {path: '/bundle2.js'},
-      {path: '/bundle3.js'},
+      // {path: '/bundle3.js'},
     ],
     prefetch: [
-      {path: '/bundle4.js'},
+      // {path: '/bundle4.js'},
     ],
   },
 };
