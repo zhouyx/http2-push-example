@@ -1,15 +1,17 @@
 
 const puppeteer = require('puppeteer');
 const fs = require('fs')
+const path = require('path');
 const toCsv = require('./to_csv');
 
 
 const OPTIONS = {
-  'help': {type: 'boolean'},
-  'runs': {type: 'int'},
-  'trace': {type: 'boolean'},
-  'screenshots': {type: 'boolean'},
-  'output': {type: 'string'},
+  'help': {type: 'boolean', desc: 'Command line options'},
+  'runs': {type: 'int', desc: 'Number of tests to run in each use case'},
+  'cpu': {type: 'int', desc: 'Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).'},
+  'trace': {type: 'boolean', desc: 'Output tracing log'},
+  'screenshots': {type: 'boolean', desc: 'Output screenshots'},
+  'output': {type: 'string', desc: 'Output directory'},
 };
 
 
@@ -18,8 +20,24 @@ async function testRun(browser, url, name, options = {}) {
   const page = await browser.newPage();
   await page.setCacheEnabled(false);
 
+  if (options.cpu) {
+    const client = await page.target().createCDPSession();
+    /*
+      await client.send('Network.enable');
+      await client.send('Network.emulateNetworkConditions', {
+        offline: false,
+        latency: 200, // ms
+        downloadThroughput: 780 * 1024 / 8, // 780 kb/s
+        uploadThroughput: 330 * 1024 / 8, // 330 kb/s
+      });
+    */
+    // See https://chromedevtools.github.io/devtools-protocol/tot/Emulation/#method-setCPUThrottlingRate
+    await client.send('Emulation.setCPUThrottlingRate', {rate: options.cpu});
+    // await page.evaluate(() => window.navigator.hardwareConcurrency);
+  }
+
   if (options.trace) {
-    await page.tracing.start({path: `${options.output}${name}-trace.json`});
+    await page.tracing.start({path: path.join(options.output, `${name}-trace.json`)});
   }
 
   await page.goto(url, {
@@ -28,7 +46,7 @@ async function testRun(browser, url, name, options = {}) {
   page.evaluate(() => window.performance.mark('puppeteer-0'));
 
   if (options.screenshots) {
-    await page.screenshot({path: `${options.output}${name}-screenshot-start.png`});
+    await page.screenshot({path: path.join(options.output, `${name}-screenshot-start.png`)});
   }
 
   // Probe input latency.
@@ -38,21 +56,30 @@ async function testRun(browser, url, name, options = {}) {
     await sleep(250);
   }
 
-  const metrics = await page.evaluate(() => window.getMetricsPromise());
-  metrics['NAME'] = name;
+  const metrics = {
+    'NAME': name,
+    'URL': url,
+    'OPTIONS': Object.assign({}, options, {
+      // Exlcude some options.
+      'runs': undefined,
+      'output': undefined,
+      'trace': undefined,
+      'screenshots': undefined,
+    }),
+  };
+  const pageMetrics = await page.evaluate(() => window.getMetricsPromise());
+  Object.assign(metrics, pageMetrics);
 
   if (options.trace) {
     await page.tracing.stop();
   }
 
   if (options.screenshots) {
-    await page.screenshot({path: `${options.output}${name}-screenshot-end.png`});
+    await page.screenshot({path: path.join(options.output, `${name}-screenshot-end.png`)});
   }
 
   await page.close();
 
-  const json = JSON.stringify(metrics, null, 2);
-  fs.writeFileSync(`${options.output}${name}-metrics.json`, json);
   return metrics;
 }
 
@@ -112,23 +139,47 @@ async function sleep(interval) {
   if (!options.output) {
     options.output = 'exports/'
   }
+  fs.mkdirSync(options.output, {recursive: true});
+
+  const usecases = ['combine', 'link', 'nopush'];
+  const metricsArrayMap = {};
+  for (let j = 0; j < usecases.length; j++) {
+    const usecase = usecases[j];
+    metricsArrayMap[usecase] = [];
+    fs.mkdirSync(path.join(options.output, usecase));
+  }
+  fs.mkdirSync(path.join(options.output, 'all'));
 
   const browser = await puppeteer.launch();
 
-  const metricsArray = [];
-
-  if (options.runs <= 1) {
-    metricsArray.push(await testRun(browser, url, 'RUN', options));
-  } else {
-    await testRun(browser, url, 'PRERUN', options);
-    for (let i = 1; i <= options.runs; i++) {
-      metricsArray.push(await testRun(browser, url, 'RUN' + i, options));
+  if (options.runs > 1) {
+    for (let j = 0; j < usecases.length; j++) {
+      const usecase = usecases[j];
+      await testRun(browser, url, `${usecase}-0`, options);
+    }
+  }
+  for (let i = 1; i <= options.runs; i++) {
+    for (let j = 0; j < usecases.length; j++) {
+      const usecase = usecases[j];
+      const name = `${usecase}-${i}`;
+      console.log('Run ', name);
+      const metrics = await testRun(browser, `${url}?${usecase}`, name, options);
+      const json = JSON.stringify(metrics, null, 2);
+      fs.writeFileSync(path.join(options.output, usecase, `${i}.json`), json);
+      metricsArrayMap[usecase].push(metrics);
     }
   }
 
   await browser.close();
 
-  const json = JSON.stringify(metricsArray, null, 2);
-  fs.writeFileSync(`${options.output}metrics.json`, json);
-  toCsv(`${options.output}metrics.json`);
+  for (let j = 0; j < usecases.length; j++) {
+    const usecase = usecases[j];
+    const metricsArray = metricsArrayMap[usecase];
+    const json = JSON.stringify(metricsArray, null, 2);
+    fs.writeFileSync(path.join(options.output, usecase, `ALL.json`), json);
+    toCsv(path.join(options.output, usecase, `ALL.json`),
+        path.join(options.output, usecase, `ALL.csv`));
+    fs.copyFileSync(path.join(options.output, usecase, `ALL.csv`),
+        path.join(options.output, 'all', `${usecase}.csv`));
+  }
 })();

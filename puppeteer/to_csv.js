@@ -159,6 +159,26 @@ function main(args, spec) {
 }
 
 
+function convertAll() {
+  console.log('convertAll');
+
+  const path = 'exports/test3/3g';
+  const name = 'combine';
+  const runs = 200;
+  const outPath = path + '/all/' + name + '.csv';
+
+  const allJson = [];
+  for (let i = 1; i <= runs; i++) {
+    const fileName = `${path}/${name}/${i}.json`;
+    const json = JSON.parse(fs.readFileSync(fileName).toString('utf-8'));
+    allJson.push(json);
+  }
+
+  const output = toCsv(allJson, DEFAULT_SPEC);
+  fs.writeFileSync(outPath, output);
+}
+
+
 function toCsv(json, spec) {
   const _output = [];
   function line(vals) {
@@ -231,13 +251,14 @@ function pathExprDelta(data, endExpr, startExpr) {
 }
 
 
-function toDefaultCsv(path) {
+function toDefaultCsv(path, outPath) {
   const json = JSON.parse(fs.readFileSync(path).toString('utf-8'));
   const output = toCsv(json, DEFAULT_SPEC);
-  fs.writeFileSync(path + '.csv', output);
+  fs.writeFileSync(outPath, output);
 }
 
 
 module.exports = toDefaultCsv;
 
 // main(process.argv.slice(2), DEFAULT_SPEC);
+// convertAll();
