@@ -10,7 +10,7 @@ const shell = require('shelljs');
 const PORT = process.env.PORT || 8000
 const PUBLIC_PATH = path.join(__dirname, '../public')
 
-app.listen(PORT, () => console.log(`New Testing app listening on port ${PORT}!`))
+app.listen(PORT, () => console.log(`Testing app listening on port ${PORT}!`))
 
 const METADATA = {
   '/bundle1.js': {
