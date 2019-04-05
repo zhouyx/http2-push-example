@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs')
 const path = require('path');
+const shell = require('shelljs');
 // eslint-disable-next-line
 
 const PORT = process.env.PORT || 8000
@@ -29,6 +30,11 @@ app.get('*.js/', (req, res) => {
 
 app.get('/test.html', (req, res) => {
   onTestHtmlRequest(req, res);
+});
+
+app.use('/important/restart/deploy', (req, res) => {
+  const output = shell.exec('git pull origin master').stdout;
+  res.end(output);
 });
 
 app.use(express.static(PUBLIC_PATH))
