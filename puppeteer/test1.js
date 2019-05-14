@@ -1,3 +1,10 @@
+/**
+ * Sample run options:
+ *
+ * ```
+ * node puppeteer/test1.js https://preloadtest.com/test.html --runs=1 --output=exports/test5
+ * ```
+ */
 
 const puppeteer = require('puppeteer');
 const fs = require('fs')
@@ -69,6 +76,7 @@ async function testRun(browser, url, name, options = {}) {
   };
   const pageMetrics = await page.evaluate(() => window.getMetricsPromise());
   Object.assign(metrics, pageMetrics);
+  // console.log('METRICS: ', await page.metrics());
 
   if (options.trace) {
     await page.tracing.stop();
