@@ -1,3 +1,10 @@
+/**
+ * Sample run options:
+ *
+ * ```
+ * node puppeteer/test1.js https://preloadtest.com/test.html --runs=1 --output=exports/test5
+ * ```
+ */
 
 const puppeteer = require('puppeteer');
 const fs = require('fs')
