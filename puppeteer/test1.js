@@ -69,6 +69,7 @@ async function testRun(browser, url, name, options = {}) {
   };
   const pageMetrics = await page.evaluate(() => window.getMetricsPromise());
   Object.assign(metrics, pageMetrics);
+  // console.log('METRICS: ', await page.metrics());
 
   if (options.trace) {
     await page.tracing.stop();
