@@ -50,11 +50,13 @@ const DEFAULT_SPEC = [
   // bundle-1 markers
   {col: 'mark:bundle1-0.startTime'},
   {col: 'mark:bundle1-ask-bundle2.startTime'},
+  {col: 'mark:bundle1-ask-bundle3.startTime'},
   {col: 'mark:bundle1-Z.startTime'},
   {col: 'mark:bundle1-1.startTime'},
   {col: 'mark:bundle1-2.startTime'},
   {col: 'mark:bundle1-3.startTime'},
   {col: 'mark:bundle1-ZZ.startTime'},
+
 
   // resource:bundle2-js
   {col: 'resource:bundle2-js.initiatorType'},
@@ -81,12 +83,40 @@ const DEFAULT_SPEC = [
   {col: 'mark:bundle2-3.startTime'},
   {col: 'mark:bundle2-ZZ.startTime'},
 
+
+  // resource:bundle3-js
+  {col: 'resource:bundle3-js.initiatorType'},
+  {col: 'resource:bundle3-js.startTime'},
+  {col: 'resource:bundle3-js.duration'},
+  {col: 'resource:bundle3-js.domainLookup', val: data => {
+    return pathExprDelta(data, 'resource:bundle3-js.domainLookup');
+  }},
+  {col: 'resource:bundle3-js.fetchStart'},
+  {col: 'resource:bundle3-js.requestStart'},
+  {col: 'resource:bundle3-js.responseStart'},
+  {col: 'resource:bundle3-js.responseEnd'},
+  {col: 'resource:bundle3-js.response', val: data => {
+    return pathExprDelta(data, 'resource:bundle3-js.responseEnd', 'resource:bundle3-js.fetchStart');
+  }},
+  {col: 'resource:bundle3-js.transferSize'},
+  {col: 'resource:bundle3-js.encodedBodySize'},
+
+  // bundle-2 markers
+  {col: 'mark:bundle3-0.startTime'},
+  {col: 'mark:bundle3-Z.startTime'},
+  {col: 'mark:bundle3-1.startTime'},
+  {col: 'mark:bundle3-2.startTime'},
+  {col: 'mark:bundle3-3.startTime'},
+  {col: 'mark:bundle3-ZZ.startTime'},
+
+
   // General document markers:
   {col: 'mark:DOMContentLoaded.startTime'},
   {col: 'mark:onload.startTime'},
   {col: 'paint:first-paint.startTime'},
   {col: 'paint:first-contentful-paint.startTime'},
   {col: 'mark:FirstIdle.startTime'},
+  {col: 'mark:FirstIdleAfterMainBundle.startTime'},
   {col: 'mark:puppeteer-0.startTime'},
 
   // Input.

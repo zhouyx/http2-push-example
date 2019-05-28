@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <script async src="__SCRIPT_BASE__/bundle1-small.js?__MODE__"/></script>
+  <script async src="__SCRIPT_BASE__/bundle1.js?__MODE__"/></script>
 
   <!-- Set up TTI -->
   <script>
@@ -34,14 +34,25 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
     }
 
     var promises = [];
+    var promiseMap = {};
     var metrics = {};
     var longTasks = [];
     var clicks = [];
+    var clickStartIndex = 0;
+    var debugs = [];
+    window.mainBundlePromise = new Promise(function(resolve) {
+      window.mainBundleResolver = resolve;
+    });
 
-    function addResolver(init) {
-      promises.push(new Promise(function(resolve) {
+    function addResolver(name, init) {
+      var promise = new Promise(function(resolve) {
         init(resolve);
-      }));
+      });
+      promises.push(promise);
+      promiseMap[name] = promise;
+      promise.then(() => {
+        debugs.push('promise ' + name + ' resolved');
+      });
     }
 
     var PO = new PerformanceObserver(function(list) {
@@ -56,28 +67,28 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
     });
     PO.observe({entryTypes: ['navigation', 'paint', 'resource', 'mark', 'measure', 'longtask', 'buffered']});
 
-    addResolver(function(resolve) {
+    addResolver('DOMContentLoaded', function(resolve) {
       document.addEventListener('DOMContentLoaded', function() {
         performance.mark('DOMContentLoaded');
         resolve();
       });
     });
 
-    addResolver(function(resolve) {
+    addResolver('onload', function(resolve) {
       window.onload = function() {
         performance.mark('onload');
         resolve();
       };
     });
 
-    addResolver(function(resolve) {
+    addResolver('TTI', function(resolve) {
       ttiPolyfill.getFirstConsistentlyInteractive().then(function(tti) {
         performance.mark('TTI');
         resolve();
       });
     });
 
-    addResolver(function(resolve) {
+    addResolver('FirstIdle', function(resolve) {
       requestIdleCallback(function(idle) {
         console.log('firstIdle: ', idle.didTimeout, idle.timeRemaining());
         performance.mark('FirstIdle');
@@ -86,7 +97,7 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
     });
 
     function startInput() {
-      var index = clicks.length;
+      var index = clickStartIndex++;
       performance.mark('input-start-' + index);
       requestIdleCallback(function(idle) {
         console.log('clickIdle: ', index, idle.didTimeout, idle.timeRemaining());
@@ -98,7 +109,7 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
       });
     }
 
-    addResolver(function(resolve) {
+    addResolver('click', function(resolve) {
       document.addEventListener('click', function(e) {
         var index = clicks.length;
         var latency = performance.now() - e.timeStamp;
@@ -134,6 +145,23 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
     }, 2000);
     */
 
+    addResolver('MainBundleLoaded', function(resolve) {
+      window.mainBundlePromise.then(function() {
+        console.log('MainBundleLoaded');
+        resolve();
+      });
+    });
+
+    addResolver('FirstIdleAfterMainBundle', function(resolve) {
+      window.mainBundlePromise.then(function() {
+        requestIdleCallback(function(idle) {
+          console.log('firstIdleAfterMain: ', idle.didTimeout, idle.timeRemaining());
+          performance.mark('FirstIdleAfterMainBundle');
+          resolve();
+        });
+      });
+    });
+
 
     function getMetricsPromise() {
       return Promise.all(promises).then(function() {
@@ -158,6 +186,11 @@ C.prototype.B=function(){G(this,performance.now()+5E3)};h.Object.definePropertie
       });
     }
 
+    function debug() {
+      var s = debugs.join('\n');
+      debugs.length = 0;
+      return s;
+    }
   </script>
 </head>
 <body>

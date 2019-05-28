@@ -12,17 +12,18 @@ const PUBLIC_PATH = path.join(__dirname, '../public')
 
 app.listen(PORT, () => console.log(`Testing app listening on port ${PORT}!`))
 
-const METADATA = {
-  '/bundle1.js': {
-    preload: [
-      {path: '/bundle2.js'},
-      // {path: '/bundle3.js'},
-    ],
-    prefetch: [
-      // {path: '/bundle4.js'},
-    ],
+const DEP_BUNDLES = ['bundle2.js', 'bundle3.js'];
+
+const MODES = {
+  'combine': {},
+  'split1': {
+    splits: ['bundle3.js'],
+  },
+  'split2': {
+    splits: DEP_BUNDLES,
   },
 };
+
 
 app.get('*.js/', (req, res) => {
   onJsRequest(req, res);
@@ -70,62 +71,50 @@ function onJsRequest(req, res) {
 
   // Push or link if needed.
   const headers = {
-    'last-modified': stat.mtime.toUTCString(),
+    'Last-Modified': stat.mtime.toUTCString(),
     'Cache-Control': 'public, max-age=600',
     'Content-Type': 'application/javascript',
   };
-  const metadata = METADATA[reqPath];
-  if (query == 'combine') {
-    console.log('COMBINE');
-    let fileString = file.toString('utf-8');
+  if (reqPath == '/bundle1.js' && query) {
+    const [modeName, linking] = query.split('-');
+    if (MODES[modeName]) {
+      let fileString = file.toString('utf-8');
+      const mode = MODES[modeName];
+      const splits = mode.splits || [];
 
-    // Process includes.
-    while (true) {
-      // Format: /* __INCLUDE__ bundle2.js */
-      const start = fileString.indexOf('/* __INCLUDE__');
-      if (start == -1) {
-        break;
-      }
-      const end = fileString.indexOf('*/', start + 1);
-      const otherName =
-          fileString.substring(start + '/* __INCLUDE__'.length, end).trim();
-      const otherFile = fs.readFileSync(PUBLIC_PATH + '/' + otherName);
-      fileString =
-          fileString.substring(0, start) +
-          '/* bundle ' + otherName + '*/\n' +
-          otherFile.toString('utf-8') +
-          fileString.substring(end + 2);
-    }
+      // Replace "splits" in the binary.
+      fileString = replace(fileString,
+          'var splits = []; /* __REPLACE__ */',
+          'var splits = ' + JSON.stringify(splits) + ';');
 
-    // Process excludes
-    while (true) {
-      // Format: /* __EXCLUDE__ */ and /* __END_EXCLUDE__ */
-      const start = fileString.indexOf('/* __EXCLUDE__ */');
-      if (start == -1) {
-        break;
-      }
-      const end = fileString.indexOf('/* __END_EXCLUDE__ */', start + 1);
-      fileString =
-          fileString.substring(0, start) +
-          '/* exlcuded */\n' +
-          fileString.substring(end + '/* __END_EXCLUDE__ */'.length);
-    }
+      // Inline non-split code.
+      const inlines = [];
+      DEP_BUNDLES.forEach(bundle => {
+        if (splits.indexOf(bundle) != -1) {
+          return;
+        }
+        const bundleFile = fs.readFileSync(PUBLIC_PATH + '/' + bundle);
+        const bundleString = bundleFile.toString('utf-8');
+        inlines.push(`
+// Inlude ${bundle}.
+next(function() {
+  ${bundleString}
+});`);
+      });
+      fileString = replace(fileString,
+          '/* __INLINES__ */',
+          inlines.join('\n') || '/* NO INCLUDES */');
 
-    // Complete.
-    file = fileString;
-  } else {
-    if (metadata && metadata.preload) {
-      if (query == 'link') {
-        metadata.preload.forEach(r => {
-          link(res, r.path, 'preload', reqPath, headers);
+      // Add links.
+      if ((linking || 'link') == 'link') {
+        splits.forEach(split => {
+          link(res, `/${split}`, 'preload', reqPath, headers);
         });
       }
+
+      // Complete.
+      file = fileString;
     }
-  }
-  if (metadata && metadata.prefetch) {
-    metadata.prefetch.forEach(r => {
-      link(res, r.path, 'prefetch', reqPath, headers);
-    });
   }
 
   const keys = Object.keys(headers);
@@ -192,4 +181,16 @@ function onTestHtmlRequest(req, res) {
   }
 
   res.end(file);
+}
+
+
+// Performs string replacement w/o string parameters.
+function replace(str, substr, newStr) {
+  var index = str.indexOf(substr);
+  if (index == -1) {
+    return str;
+  }
+  return str.substring(0, index)
+      + newStr
+      + str.substring(index + substr.length);
 }

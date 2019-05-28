@@ -2,7 +2,7 @@
  * Sample run options:
  *
  * ```
- * node puppeteer/test1.js https://preloadtest.com/test.html --runs=1 --output=exports/test5
+ * node puppeteer/test1.js https://preloadtest.com/test.html --runs=50 --output=exports/test6
  * ```
  */
 
@@ -56,6 +56,8 @@ async function testRun(browser, url, name, options = {}) {
     await page.screenshot({path: path.join(options.output, `${name}-screenshot-start.png`)});
   }
 
+  await page.evaluate(() => window.mainBundlePromise);
+
   // Probe input latency.
   for (let i = 0; i < 8; i++) {
     page.evaluate(() => window.startInput());
@@ -74,6 +76,10 @@ async function testRun(browser, url, name, options = {}) {
       'screenshots': undefined,
     }),
   };
+  // setInterval(async function() {
+  //   const debug = await page.evaluate(() => window.debug());
+  //   console.log('debug: ', debug);
+  // }, 5000);
   const pageMetrics = await page.evaluate(() => window.getMetricsPromise());
   Object.assign(metrics, pageMetrics);
   // console.log('METRICS: ', await page.metrics());
@@ -149,7 +155,7 @@ async function sleep(interval) {
   }
   fs.mkdirSync(options.output, {recursive: true});
 
-  const usecases = ['combine', 'link', 'nopush'];
+  const usecases = ['combine', 'split1', 'split2', 'split1-nolink', 'split2-nolink'];
   const metricsArrayMap = {};
   for (let j = 0; j < usecases.length; j++) {
     const usecase = usecases[j];
