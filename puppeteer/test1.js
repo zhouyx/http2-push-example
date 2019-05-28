@@ -155,8 +155,7 @@ async function sleep(interval) {
   }
   fs.mkdirSync(options.output, {recursive: true});
 
-  // const usecases = ['combine', 'split1', 'split2', 'split1-nolink', 'split2-nolink'];
-  const usecases = ['split1'];
+  const usecases = ['combine', 'split1', 'split2', 'split1-nolink', 'split2-nolink'];
   const metricsArrayMap = {};
   for (let j = 0; j < usecases.length; j++) {
     const usecase = usecases[j];
